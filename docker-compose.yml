@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+    
+        
+    postgres:
+        container_name: postgres
+        image: mdillon/postgis
+        environment: 
+            POSTGRES_PASSWORD: rndpassword
+            POSTGRES_USER: postgres
+            POSTGRES_DB: geogis
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        ports: 
+            - '5432:5432'
+    
+    web:
+        container_name: app
+        restart: always
+        build: . 
+        ports:
+            - '80:5800'
+        depends_on: 
+            - postgres
+        command: bash -c "/usr/wait-for-it.sh --timeout=0 postgres:5432 -- npm start"
+
+volumes: 
+    pgdata:
